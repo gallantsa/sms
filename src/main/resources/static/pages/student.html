@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <meta
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+      name="viewport"
+    />
+
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../plugins/elementui/index.css" />
+    <link
+      rel="stylesheet"
+      href="../plugins/font-awesome/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+
+  <style>
+    .course-selection {
+      margin: 20px;
+    }
+    .selected-topic {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #dcdfe6;
+      background-color: #f2f6fc;
+      border-radius: 4px;
+    }
+    .el-table {
+      margin-top: 20px;
+    }
+    .el-table__header-wrapper {
+      background-color: #f8f8f9;
+    }
+    .el-table__body-wrapper {
+      border: 1px solid #dcdfe6;
+      border-top: none;
+    }
+    .el-table__row:hover {
+      background-color: #f2f6fc;
+    }
+    .el-button--danger {
+      background-color: #ff4d4f;
+      border-color: #ff4d4f;
+    }
+    </style>
+  <body>
+    <div id="app">
+      <template>
+        <div class="course-selection">
+          <h1>{{ courseName }}课程设计选题</h1>
+          <div class="selected-topic" v-if="selectedTopic">
+            <h2>已选题目：{{ selectedTopic.name }}</h2>
+            <p>指导教师：{{ selectedTopic.teacher }}</p>
+            <p>题目描述：{{ selectedTopic.description }}</p>
+            <el-button type="danger" @click="removeSelectedTopic">删除</el-button>
+          </div>
+          <el-table :data="topics" style="width: 100%" highlight-current-row>
+            <el-table-column type="index" label="题目编号"></el-table-column>
+            <el-table-column prop="name" label="题目名称"></el-table-column>
+            <el-table-column prop="teacher" label="指导教师"></el-table-column>
+            <el-table-column prop="description" label="题目描述"></el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button type="primary" @click="selectTopic(scope.row)">选择</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </template>
+      
+          
+    </div>
+
+    <!-- 引入组件库 -->
+    <script src="../js/vue.js"></script>
+    <script src="../plugins/elementui/index.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script src="../js/axios-0.18.0.js"></script>
+    <script>
+      new Vue({
+        el: "#app",
+        data() {
+          return {
+            courseName: "计算机网络",
+            topics: [
+              {
+                id: 1,
+                name: "TCP协议的性能优化研究",
+                teacher: "张三",
+                description: "本课题研究TCP协议的性能问题，并提出优化方案。",
+              },
+              {
+                id: 2,
+                name: "SDN网络的设计与实现",
+                teacher: "李四",
+                description: "本课题研究SDN网络的架构、协议和实现技术，完成一套SDN网络的原型系统。",
+              },
+              {
+                id: 3,
+                name: "区块链技术在金融领域的应用研究",
+                teacher: "王五",
+                description: "本课题研究区块链技术在金融领域的应用，探索其在支付、结算、信用等方面的优势。",
+              },
+            ],
+            selectedTopic: null,
+          };
+        },
+        methods: {
+          selectTopic(topic) {
+            this.$confirm(`是否选择题目：${topic.name}？`, "提示", {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              type: "info",
+            })
+              .then(() => {
+                this.selectedTopic = topic;
+                this.$message.success(`已选择题目：${topic.name}`);
+              })
+              .catch(() => {});
+          },
+          removeSelectedTopic() {
+            this.$confirm(`是否删除已选题目：${this.selectedTopic.name}？`, "提示", {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              type: "warning",
+            })
+              .then(() => {
+                this.selectedTopic = null;
+                this.$message.success(`已删除已选题目`);
+              })
+              .catch(() => {});
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

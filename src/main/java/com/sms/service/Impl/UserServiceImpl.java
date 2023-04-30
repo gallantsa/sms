@@ -1,0 +1,15 @@
+package com.sms.service.Impl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sms.dao.UserDao;
+import com.sms.domain.User;
+import com.sms.service.UserService;
+import org.springframework.stereotype.Service;
+
+/**
+ * @author 王伟立
+ * @version 1.0
+ */
+@Service
+public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserService {
+}
