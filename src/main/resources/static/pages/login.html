@@ -6,85 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
   </head>
-  <style>
-    /*表单居中*/
-    .container {
+  <style scoped>
+    .login-form-container {
       display: flex;
-      flex-direction: column;
       justify-content: center;
-      align-items: center;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
     }
 
-    /*处理注册按钮*/
-    .register-link {
-      margin-left: 5px;
-      color: #409eff;
-      cursor: pointer;
-    }
-
-    .register-link:hover {
-      text-decoration: underline;
-    }
-
-    /*处理忘记密码按钮*/
-    .forget-link {
-      margin-left: 5px;
-      color: #409eff;
-      cursor: pointer;
-    }
-
-    .forget-link:hover {
-      text-decoration: underline;
-    }
-
-    /*装饰登录表单标题*/
-    .title {
-      font-size: 24px;
-      font-weight: bold;
-      margin: 0;
-      color: white;
-    }
-
-    .title-container {
-      margin-bottom: 20px;
-    }
-    /*背景图片*/
-    body::before {
-      content: "";
-      display: block;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(
-        0,
-        0,
-        0,
-        0.5
-      ); /* adjust the alpha value to change the opacity */
-      z-index: -1;
-    }
-
-    body {
-      background-image: url("../image/背景图片2.jpg");
-      background-size: cover;
-      background-position: center center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-    }
-
-    /*字体变白*/
-    .input-color .el-form-item__label {
-      color: white;
-    }
-    .input-color {
-      color: white;
+    .login-form {
+      width: 400px;
+      margin-top: 50px;
     }
   </style>
   <meta
@@ -104,129 +34,21 @@
     <div id="app">
       <!-- 登录表单组件 -->
       <template>
-        <div class="container">
-          <div class="title-container">
-            <h1 class="title">用户登录</h1>
-          </div>
-
-          <el-form
-            ref="loginForm"
-            :model="loginForm"
-            :rules="loginRules"
-            label-width="80px"
-          >
-            <el-form-item label="用户名" prop="username" class="input-color">
-              <el-input
-                v-model="loginForm.username"
-                style="width: 200px"
-              ></el-input>
+        <div class="login-form-container">
+          <el-form ref="loginForm" :model="loginForm" label-width="80px" class="login-form">
+            <el-form-item label="用户账号:" prop="userNo">
+              <el-input v-model="loginForm.userNo" placeholder="请输入用户账号"></el-input>
             </el-form-item>
-
-            <el-form-item label="密码" prop="password" class="input-color">
-              <el-input
-                type="password"
-                v-model="loginForm.password"
-                style="width: 200px"
-              ></el-input>
+            <el-form-item label="密码:" prop="password">
+              <el-input type="password" v-model="loginForm.password" placeholder="请输入密码"></el-input>
             </el-form-item>
-
-            <el-form-item label="身份" prop="identity" class="input-color">
-              <el-select v-model="loginForm.identity" placeholder="请选择身份">
-                <el-option label="管理员" value="admin"></el-option>
-                <el-option label="教师" value="teacher"></el-option>
-                <el-option label="学生" value="student"></el-option>
-              </el-select>
-            </el-form-item>
-
-            <!-- Login button and "forgot password" button -->
             <el-form-item>
-              <el-button type="primary" @click="handleSubmitForm"
-                >登录</el-button
-              >
-              <span class="input-color">没有账号？</span>
-              <a @click="handleGoToRegister" class="register-link">注册</a>
-              <a @click="handleForgotPassword" class="forget-link">忘记密码</a>
+              <el-button type="primary" @click="login">登录</el-button>
             </el-form-item>
-
-            <!-- 忘记密码弹框 -->
-            <el-dialog
-              title="忘记密码"
-              :visible.sync="forgotPasswordDialogVisible"
-            >
-              <el-form
-                :model="forgotPasswordForm"
-                ref="forgotPasswordForm"
-                label-width="80px"
-              >
-                <el-form-item label="注册邮箱" prop="email">
-                  <el-input
-                    v-model="forgotPasswordForm.email"
-                    style="width: 200px"
-                  ></el-input>
-                </el-form-item>
-              </el-form>
-              <div slot="footer">
-                <el-button @click="forgotPasswordDialogVisible = false"
-                  >取消</el-button
-                >
-                <el-button type="primary" @click="handleForgotPasswordSubmit"
-                  >提交</el-button
-                >
-              </div>
-            </el-dialog>
-
-            <!-- 注册弹框 -->
-            <el-dialog title="注册" :visible.sync="isRegisterDialogVisible">
-              <el-form
-                ref="registerForm"
-                :model="registerForm"
-                :rules="registerRules"
-              >
-                <el-form-item label="用户名" prop="username">
-                  <el-input
-                    v-model="registerForm.username"
-                    placeholder="请输入用户名"
-                  ></el-input>
-                </el-form-item>
-                
-                <el-form-item label="密码" prop="password">
-                  <el-input
-                    v-model="registerForm.password"
-                    type="password"
-                    placeholder="请输入密码"
-                  ></el-input>
-                </el-form-item>
-
-                <el-form-item label="确认密码" prop="confirmPassword">
-                  <el-input
-                    v-model="registerForm.confirmPassword"
-                    type="password"
-                    placeholder="请确认密码"
-                  ></el-input>
-                </el-form-item>
-
-                <el-form-item label="邮箱" prop="email">
-                  <el-input
-                    v-model="registerForm.email"
-                    placeholder="请输入邮箱"
-                  ></el-input>
-                </el-form-item>
-
-                <el-form-item label="身份" prop="identity">
-                    <el-radio-group v-model="registerForm.identity">
-                      <el-radio v-model="registerForm.identity" label="student">学生</el-radio>
-                      <el-radio v-model="registerForm.identity" label="teacher">教师</el-radio>
-                    </el-radio-group>
-                  </el-form-item>
-                </el-form>
-                <div slot="footer">
-                  <el-button @click="isRegisterDialogVisible = false">取消</el-button>
-                  <el-button type="primary" @click="handleSubmitRegisterForm">注册</el-button>
-                </div>
-            </el-dialog>
           </el-form>
         </div>
       </template>
+
     </div>
 
     <!-- 引入组件库 -->
@@ -237,138 +59,43 @@
     <script>
       new Vue({
         el: "#app",
+        name: 'LoginForm',
         data() {
           return {
-            //登录
             loginForm: {
-              username: "",
-              password: "",
-              identity: "student", //默认为学生身份
-            },
-
-            loginRules: {
-              username: [
-                { required: true, message: "请输入用户名", trigger: "blur" },
-              ],
-              password: [
-                { required: true, message: "请输入密码", trigger: "blur" },
-                {
-                    min: 6,
-                    max: 20,
-                    message: "密码长度应为 6 到 20 个字符",
-                    trigger: "blur",
-                  },
-              ],
-              identity: [
-                { required: true, message: "请选择身份", trigger: "change" },
-              ],
-            },
-
-            <!-- 注册表单 -->
-            isRegisterDialogVisible: false,
-            registerForm: {
-              username: "",
-              password: "",
-              confirmPassword: "",
-              email: "",
-              identity: 'student', // 默认为学生身份
-            },
-            registerRules: {
-              username: [
-                { required: true, message: "请输入用户名", trigger: "blur" },
-              ],
-              password: [
-                { required: true, message: "请输入密码", trigger: "blur" },
-                {
-                  min: 6,
-                  max: 20,
-                  message: "密码长度应为 6 到 20 个字符",
-                  trigger: "blur",
-                },
-              ],
-              confirmPassword: [
-                { required: true, message: "请确认密码", trigger: "blur" },
-                {
-                  validator: (rule, value, callback) => {
-                    if (value === "") {
-                      callback(new Error("请再次输入密码"));
-                    } else if (value !== this.registerForm.password) {
-                      callback(new Error("两次输入密码不一致"));
-                    } else {
-                      callback();
-                    }
-                  },
-                  trigger: "blur",
-                },
-              ],
-              email: [
-                { required: true, message: "请输入邮箱", trigger: "blur" },
-                { type: "email", message: "邮箱格式不正确", trigger: "blur" },
-              ],
-            },
-
-            // 忘记密码
-            forgotPasswordDialogVisible: false,
-            forgotPasswordForm: {
-              email: "",
+              userNo: '',
+              password: '',
             },
           };
         },
-
-        //钩子函数，VUE对象初始化完成后自动执行
-        created() {
-          this.getAll();
-        },
-
         methods: {
-          //列表
-          getAll() {
-            //发送ajax请求
-            axios.get("/user").then((res)=>{
-              this.dataList = res.data.data;
-            });
-          },
-          handleSubmitForm() {
+          login() {
             this.$refs.loginForm.validate((valid) => {
               if (valid) {
-                // 处理登录逻辑
-
-              } else {
-                return false;
+                axios.post('/user/login', this.loginForm)
+                        .then((response) => {
+                          const data = response.data;
+                          if (data.code === 1) {
+                            this.$message.success('登录成功');
+                            // 将用户信息保存在本地存储或会话存储中
+                            // 重定向到首页
+                            if (data.data === 'manager') {
+                              window.location.href = '/pages/manager.html';
+                            } else if (data.data=== 'teacher') {
+                              window.location.href = '/pages/teacher.html';
+                            } else if (data.data === 'student') {
+                              window.location.href = '/pages/student.html';
+                            }
+                          } else {
+                            this.$message.error(data.message);
+                          }
+                        })
+                        .catch((error) => {
+                          console.log(error);
+                          this.$message.error('登录失败');
+                        });
               }
             });
-          },
-          
-          //注册
-          handleGoToRegister() {
-            // 打开注册 Dialog
-            this.isRegisterDialogVisible = true;
-          },
-
-          handleSubmitRegisterForm() {
-            this.$refs.registerForm.validate(valid => {
-              if (valid) {
-                const { username, password, email, identity } = this.registerForm;
-                this.register({ username, password, email, identity })
-                  .then(() => {
-                    this.$message.success('注册成功');
-                    this.isRegisterDialogVisible = false;
-                  })
-                  .catch(error => {
-                    this.$message.error(error.message);
-                  });
-              }
-            });
-          },
-
-          // 处理忘记密码
-          handleForgotPassword() {
-            this.forgotPasswordDialogVisible = true;
-          },
-          handleForgotPasswordSubmit() {
-            // TODO: Implement the forgot password functionality
-            this.$message.success("找回密码邮件已发送，请检查您的邮箱。");
-            this.forgotPasswordDialogVisible = false;
           },
         },
       });

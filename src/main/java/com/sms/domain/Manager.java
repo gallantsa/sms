@@ -1,5 +1,6 @@
 package com.sms.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 /**
@@ -7,9 +8,11 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
-public class Manager {
+public class Manager extends User{
+    @TableField("managerNo")
     private String managerNo;
+    @TableField("managerName")
     private String managerName;
-    private String sex;
+    @TableField("phoneNum")
     private String phoneNum;
 }

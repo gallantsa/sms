@@ -32,11 +32,11 @@ public class UserController {
      */
     //发送post请求
     @PostMapping("/login")
-    public Result<User> login(HttpServletRequest request, @RequestBody User user){
+    public Result<String> login(HttpServletRequest request, @RequestBody User user){
         //获取密码
         String password = user.getPassword();
 
-        // 根据页面提交的用户账号userno查询数据库
+        // 根据页面提交的用户账号userNo查询数据库
         LambdaQueryWrapper<User> lqw = new LambdaQueryWrapper<>();
 
         lqw.eq(User::getUserNo, user.getUserNo());
@@ -49,7 +49,14 @@ public class UserController {
         }
 
         request.getSession().setAttribute("user", us.getUserNo());
-        return Result.success(us);
+        // 根据用户身份返回不同的结果
+        if (us.getIdentity().equals("管理员")) {
+            return Result.success("manager");
+        } else if (us.getIdentity().equals("教师")) {
+            return Result.success("teacher");
+        } else {
+            return Result.success("student");
+        }
     }
 
     /**

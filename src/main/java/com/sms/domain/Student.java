@@ -1,5 +1,6 @@
 package com.sms.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 /**
@@ -8,12 +9,11 @@ import lombok.Data;
  */
 
 @Data
-public class Student {
+public class Student extends User{
+    @TableField("studentNo")
     private String studentNo;
+    @TableField("studentName")
     private String studentName;
-    private String sex;
-    private String birthday;
-    private String _native;
-    private String nation;
+    @TableField("classNo")
     private String classNo;
 }
