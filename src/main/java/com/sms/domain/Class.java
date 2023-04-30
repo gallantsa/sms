@@ -1,6 +1,7 @@
 package com.sms.domain;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
@@ -8,6 +9,7 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
+@TableName("Class")
 public class Class {
     @TableField("classNo")
     private String classNo;

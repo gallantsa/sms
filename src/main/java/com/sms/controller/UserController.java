@@ -64,10 +64,10 @@ public class UserController {
      * @param request
      * @return
      */
-    @PostMapping("/logout")
-    public Result<String> logout(HttpServletRequest request) {
-        request.getSession().removeAttribute("user");
-        return Result.success("退出成功");
-    }
+//    @PostMapping("/logout")
+//    public Result<String> logout(HttpServletRequest request) {
+//        request.getSession().removeAttribute("user");
+//        return Result.success("退出成功");
+//    }
 
 }

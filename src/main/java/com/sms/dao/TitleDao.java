@@ -1,8 +1,13 @@
 package com.sms.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.sms.domain.Title;
+import org.apache.ibatis.annotations.Mapper;
+
 /**
  * @author 王伟立
  * @version 1.0
  */
-public interface TitleDao {
+@Mapper
+public interface TitleDao extends BaseMapper<Title> {
 }

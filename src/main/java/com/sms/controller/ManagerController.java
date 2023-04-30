@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * @version 1.0
  */
 @RestController
-@RequestMapping("/Manager")
+@RequestMapping("/manager")
 public class ManagerController {
 
     @Autowired
