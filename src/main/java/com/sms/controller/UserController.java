@@ -58,16 +58,4 @@ public class UserController {
             return Result.success("student");
         }
     }
-
-    /**
-     * 登出功能
-     * @param request
-     * @return
-     */
-//    @PostMapping("/logout")
-//    public Result<String> logout(HttpServletRequest request) {
-//        request.getSession().removeAttribute("user");
-//        return Result.success("退出成功");
-//    }
-
 }

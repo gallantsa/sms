@@ -15,5 +15,4 @@ public class User {
     @TableField("userName")
     private String userName;
     private String identity;
-    private String email;
 }

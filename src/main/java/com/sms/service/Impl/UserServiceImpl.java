@@ -17,15 +17,4 @@ import java.util.List;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserService {
 
-    @Autowired
-    private UserDao userDao;
-
-    public List<User> findByUserNo() {
-        LambdaQueryWrapper<User> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(User::getUserNo, "admin");
-        List<User> users = userDao.selectList(lqw);
-
-
-        return users;
-    }
 }
