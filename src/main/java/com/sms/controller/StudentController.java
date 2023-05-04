@@ -1,8 +1,11 @@
 package com.sms.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sms.domain.Student;
+import com.sms.domain.User;
 import com.sms.service.StudentService;
+import com.sms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +20,10 @@ import java.util.List;
 public class StudentController {
     @Autowired
     private StudentService studentService;
+
+    @Autowired
+    private UserService userService;
+
 
     /**
      * 根据学号获取学生信息
@@ -35,7 +42,12 @@ public class StudentController {
      */
     @PostMapping
     public boolean saveStudent(@RequestBody Student student) {
-        return studentService.save(student);
+        User user = new User();
+        user.setUserName(student.getStudentName());
+        user.setUserNo(student.getStudentName());
+        user.setPassword("123456");
+        user.setIdentity("学生");
+        return studentService.save(student) && userService.save(user);
     }
 
     /**
@@ -55,7 +67,13 @@ public class StudentController {
      */
     @DeleteMapping("/{studentNo}")
     public boolean deleteStudentById(@PathVariable String studentNo) {
-        return studentService.removeById(studentNo);
+        QueryWrapper<Student> qw = new QueryWrapper<>();
+        QueryWrapper<User> qw2 = new QueryWrapper<>();
+        qw.eq("studentNo", studentNo);
+        Student student = studentService.getOne(qw);
+        System.out.println(student.getStudentName());
+        qw2.eq("userName", student.getStudentName());
+        return studentService.removeById(studentNo) && userService.removeById(userService.getOne(qw2).getUserNo());
     }
 
     /**

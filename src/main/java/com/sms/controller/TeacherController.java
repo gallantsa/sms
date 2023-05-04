@@ -1,7 +1,10 @@
 package com.sms.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sms.domain.Teacher;
+import com.sms.domain.User;
 import com.sms.service.TeacherService;
+import com.sms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +19,9 @@ import java.util.List;
 public class TeacherController {
     @Autowired
     private TeacherService teacherService;
+
+    @Autowired
+    private UserService userService;
 
     /**
      * 根据教师编号查找教师
@@ -34,7 +40,12 @@ public class TeacherController {
      */
     @PostMapping
     public boolean saveTeacher(@RequestBody Teacher teacher) {
-        return teacherService.save(teacher);
+        User user = new User();
+        user.setUserName(teacher.getTeacherName());
+        user.setUserNo(teacher.getTeacherName());
+        user.setPassword("123456");
+        user.setIdentity("教师");
+        return teacherService.save(teacher) && userService.save(user);
     }
 
     /**
@@ -48,13 +59,19 @@ public class TeacherController {
     }
 
     /**
-     * 删除教师
+     * 根据教师编号删除教师
      * @param teacherNo
      * @return
      */
     @DeleteMapping("/{teacherNo}")
     public boolean deleteTeacherById(@PathVariable String teacherNo) {
-        return teacherService.removeById(teacherNo);
+        QueryWrapper<Teacher> qw = new QueryWrapper<>();
+        QueryWrapper<User> qw2 = new QueryWrapper<>();
+        qw.eq("teacherNo", teacherNo);
+        Teacher teacher = teacherService.getOne(qw);
+        qw2.eq("userName", teacher.getTeacherName());
+
+        return teacherService.removeById(teacherNo) && userService.removeById(userService.getOne(qw2).getUserNo());
     }
 
     /**

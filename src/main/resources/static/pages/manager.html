@@ -59,7 +59,7 @@
                     <el-form-item label="学生姓名">
                       <el-input v-model="studentForm.studentName" placeholder="请输入学生姓名" style="width: 200px"></el-input>
                     </el-form-item>
-                    <el-form-item label="学生邮箱">
+                    <el-form-item label="班级号">
                       <el-input v-model="studentForm.classNo" placeholder="请输入学生班级号" style="width: 200px"></el-input>
                     </el-form-item>
                     <el-form-item>
@@ -129,12 +129,6 @@
                   axios.post('/teacher', this.teacherForm)
                     .then(response => {
                       this.$message.success('教师信息保存成功')
-                      // this.teacherForm = {
-                      //   // teacherNo: '',
-                      //   // teacherName: '',
-                      //   // instituteNo: '',
-                      //   // password: '123456'
-                      // }
                       this.getTeacherList()
                     })
                     .catch(error => {
@@ -171,12 +165,12 @@
                   axios.post('/student', this.studentForm)
                     .then(response => {
                       this.$message.success('学生信息保存成功')
-                      this.studentForm = {
-                        id: '',
-                        name: '',
-                        email: '',
-                        password: ''
-                      }
+                      // this.studentForm = {
+                      //   // id: '',
+                      //   // name: '',
+                      //   // email: '',
+                      //   // password: ''
+                      // }
                       this.getStudentList()
                     })
                     .catch(error => {
@@ -190,14 +184,17 @@
               // 删除学生信息
               // 发送 DELETE 请求删除学生信息
               // 成功后重新获取学生列表
-              axios.delete(`/student/` + row.id)
-                .then(response => {
-                  this.$message.success('学生信息删除成功')
-                  this.getStudentList()
-                })
-                .catch(error => {
-                  this.$message.error('学生信息删除失败')
-                })
+              this.$confirm("此操作永久删除当前数据，是否继续？","提示",{
+                type:'info'
+              }).then(()=>{
+                axios.delete(`/student/` + row.studentNo)
+                        .then(response => {
+                          this.$message.success('学生信息信息删除成功')
+                          this.getStudentList()
+                        })
+              }).catch(error => {
+                this.$message.error('学生信息删除失败')
+              })
             },
 
             // 完成
