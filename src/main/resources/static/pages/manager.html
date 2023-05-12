@@ -1,234 +1,394 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Document</title>
     <meta
-      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
-      name="viewport"
+            content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+            name="viewport"
     />
 
     <!-- 引入样式 -->
-    <link rel="stylesheet" href="../plugins/elementui/index.css" />
+    <link rel="stylesheet" href="../plugins/elementui/index.css"/>
     <link
-      rel="stylesheet"
-      href="../plugins/font-awesome/css/font-awesome.min.css"
+            rel="stylesheet"
+            href="../plugins/font-awesome/css/font-awesome.min.css"
     />
-    <link rel="stylesheet" href="../css/style.css" />
-  </head>
-  <body>
-    <div id="app">
-        <template>
-            <div class="admin-manage">
-              <h1>管理员管理页面</h1>
-              <el-tabs v-model="activeTab" type="border-card">
+    <link rel="stylesheet" href="../css/style.css"/>
+</head>
+<style>
+    .my-input {
+        width: 150px;
+        height: 30px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+</style>
+<body>
+<div id="app">
+    <template>
+        <div class="admin-manage">
+            <h1>管理员管理页面</h1>
+            <!--            教师信息管理页面-->
+            <el-tabs v-model="activeTab" type="border-card">
                 <el-tab-pane label="教师管理" name="teacher">
-                  <el-form :model="teacherForm" ref="teacherForm" label-width="80px" style="margin-top: 20px;">
-                    <el-form-item label="教师编号">
-                      <el-input v-model="teacherForm.teacherNo" placeholder="请输入教师编号" style="width: 200px"></el-input>
-                    </el-form-item>
-                    <el-form-item label="教师姓名">
-                      <el-input v-model="teacherForm.teacherName" placeholder="请输入教师姓名" style="width: 200px"></el-input>
-                    </el-form-item>
-                    <el-form-item label="学院编号">
-                      <el-input v-model="teacherForm.instituteNo" placeholder="请输入学院编号" style="width: 200px"></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                      <el-button type="primary" @click="submitTeacherForm">提交</el-button>
-                    </el-form-item>
-                  </el-form>
-                  <el-table size="small" current-row-key="id" stripe highlight-current-row :data="teacherList" style="margin-top: 20px;">
-                    <el-table-column prop="teacherNo" label="编号"></el-table-column>
-                    <el-table-column prop="teacherName" label="姓名"></el-table-column>
-                    <el-table-column prop="instituteNo" label="学院编号"></el-table-column>
-                    <el-table-column label="操作">
-                      <template slot-scope="scope">
-                        <el-button type="primary" size="mini" @click="UpdateTeacher(scope.row)">编辑</el-button>
-                        <el-button type="danger" size="mini" @click="deleteTeacher(scope.row)">删除</el-button>
-                      </template>
-                    </el-table-column>
-                  </el-table>
+                    <!--                    增加教师-->
+                    <el-form :model="teacherForm" ref="teacherForm" label-width="80px" style="margin-top: 20px;">
+                        <el-form-item label="教师编号">
+                            <el-input v-model="teacherForm.teacherNo" placeholder="请输入教师编号"
+                                      style="width: 200px"></el-input>
+                        </el-form-item>
+                        <el-form-item label="教师姓名">
+                            <el-input v-model="teacherForm.teacherName" placeholder="请输入教师姓名"
+                                      style="width: 200px"></el-input>
+                        </el-form-item>
+                        <el-form-item label="学院编号">
+                            <el-input v-model="teacherForm.instituteNo" placeholder="请输入学院编号"
+                                      style="width: 200px"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="submitTeacherForm">提交</el-button>
+                        </el-form-item>
+                    </el-form>
+
+                    <!--                    搜索教师-->
+                    <el-input v-model="teacherNo" placeholder="请输入教师编号" class="my-input"></el-input>
+                    <el-button type="primary" @click="searchTeacher">搜索</el-button>
+
+                    <!--展示教师信息, 编辑删除功能-->
+                    <el-table size="small" current-row-key="id" stripe highlight-current-row :data="teacherList"
+                              style="margin-top: 20px;">
+                        <el-table-column type="index" label="序号"></el-table-column>
+                        <el-table-column prop="teacherNo" label="教师编号"></el-table-column>
+                        <el-table-column prop="teacherName" label="姓名"></el-table-column>
+                        <el-table-column prop="instituteNo" label="学院编号"></el-table-column>
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+                                <el-button type="primary" size="mini" @click="editTeacherRow(scope.row)">编辑</el-button>
+                                <el-button type="danger" size="mini" @click="deleteTeacher(scope.row)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
                 </el-tab-pane>
+
+                <el-dialog title="编辑教师信息" :visible.sync="editTeacherVisible" :show-close="false">
+                    <el-form :model="editTeacher" label-width="80px">
+                        <el-form-item label="教师编号">
+                            <el-input v-model="editTeacher.teacherNo" disabled></el-input>
+                        </el-form-item>
+                        <el-form-item label="教师姓名">
+                            <el-input v-model="editTeacher.teacherName" disabled="disabled"></el-input>
+                        </el-form-item>
+                        <el-form-item label="学院编号">
+                            <el-input v-model="editTeacher.instituteNo"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="cancel">取消</el-button>
+                        <el-button type="primary" @click="saveTeacher">保存</el-button>
+                    </div>
+                </el-dialog>
+
+                <!--                学生信息管理页面-->
+                <!--                增加学生信息-->
                 <el-tab-pane label="学生管理" name="student">
-                  <el-form :model="studentForm" ref="studentForm" label-width="80px" style="margin-top: 20px;">
-                    <el-form-item label="学生编号">
-                      <el-input v-model="studentForm.studentNo" placeholder="请输入学生编号" style="width: 200px"></el-input>
-                    </el-form-item>
-                    <el-form-item label="学生姓名">
-                      <el-input v-model="studentForm.studentName" placeholder="请输入学生姓名" style="width: 200px"></el-input>
-                    </el-form-item>
-                    <el-form-item label="班级号">
-                      <el-input v-model="studentForm.classNo" placeholder="请输入学生班级号" style="width: 200px"></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                      <el-button type="primary" @click="submitStudentForm">提交</el-button>
-                    </el-form-item>
-                  </el-form>
-                  <el-table :data="studentList" style="margin-top: 20px;">
-                    <el-table-column prop="studentNo" label="学号"></el-table-column>
-                    <el-table-column prop="studentName" label="姓名"></el-table-column>
-                    <el-table-column prop="classNo" label="班级号"></el-table-column>
-                    <el-table-column label="操作">
-                      <template slot-scope="scope">
-                        <el-button type="danger" size="mini" @click="deleteStudent(scope.row)">删除</el-button>
-                      </template>
-                    </el-table-column>
-                  </el-table>
+                    <el-form :model="studentForm" ref="studentForm" label-width="80px" style="margin-top: 20px;">
+                        <el-form-item label="学生编号">
+                            <el-input v-model="studentForm.studentNo" placeholder="请输入学生编号"
+                                      style="width: 200px"></el-input>
+                        </el-form-item>
+                        <el-form-item label="学生姓名">
+                            <el-input v-model="studentForm.studentName" placeholder="请输入学生姓名"
+                                      style="width: 200px"></el-input>
+                        </el-form-item>
+                        <el-form-item label="班级号">
+                            <el-input v-model="studentForm.classNo" placeholder="请输入学生班级号"
+                                      style="width: 200px"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="submitStudentForm">提交</el-button>
+                        </el-form-item>
+                    </el-form>
+
+<!--                    搜索学生-->
+                    <el-input v-model="studentNo" placeholder="请输入学生学号" class="my-input"></el-input>
+                    <el-button type="primary" @click="searchStudent">搜索</el-button>
+
+
+                    <!--展示学生信息          -->
+                    <el-table :data="studentList" style="margin-top: 20px;">
+                        <el-table-column type="index" label="序号"></el-table-column>
+                        <el-table-column prop="studentNo" label="学号"></el-table-column>
+                        <el-table-column prop="studentName" label="姓名"></el-table-column>
+                        <el-table-column prop="classNo" label="班级号"></el-table-column>
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+                                <el-button type="primary" size="mini" @click="editStudentRow(scope.row)">编辑</el-button>
+                                <el-button type="danger" size="mini" @click="deleteStudent(scope.row)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+
+                    <el-dialog title="编辑学生信息" :visible.sync="editStudentVisible" :show-close="false">
+                        <el-form :model="editStudent" label-width="80px">
+                            <el-form-item label="学号">
+                                <el-input v-model="editStudent.studentNo" disabled></el-input>
+                            </el-form-item>
+                            <el-form-item label="姓名">
+                                <el-input v-model="editStudent.studentName" disabled="disabled"></el-input>
+                            </el-form-item>
+                            <el-form-item label="班级号">
+                                <el-input v-model="editStudent.classNo"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="cancel">取消</el-button>
+                            <el-button type="primary" @click="saveStudent">保存</el-button>
+                        </div>
+                    </el-dialog>
                 </el-tab-pane>
-              </el-tabs>
-            </div>
-          </template>
+            </el-tabs>
+        </div>
+    </template>
 
-    </div>
+</div>
 
-    <!-- 引入组件库 -->
-    <script src="../js/vue.js"></script>
-    <script src="../plugins/elementui/index.js"></script>
-    <script type="text/javascript" src="../js/jquery.min.js"></script>
-    <script src="../js/axios-0.18.0.js"></script>
-    <script>
-      new Vue({
+<!-- 引入组件库 -->
+<script src="../js/vue.js"></script>
+<script src="../plugins/elementui/index.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script>
+    new Vue({
         el: "#app",
 
-        data:{
-          //return {
-            activeTab: 'teacher',
+        data: {
+            teacherNo: '',
+            teacherList: [],
             teacherForm: {
-              // teacherNo: '',
-              // teacherName: '',
-              // instituteNo: '',
-              // password: '123456'
+                teacherNo: '',
+                teacherName: '',
+                instituteNo: '',
             },
+            editTeacher: {
+                teacherNo: '',
+                teacherName: '',
+                instituteNo: '',
+            },
+            studentNo: '',
+            studentList: [],
             studentForm: {
-              // studentNo: '',
-              // studentName: '',
-              // classNo: '',
-              // password: '123456'
+                studentNo: '',
+                studentName: '',
+                classNo: '',
             },
-            teacherList: [
-              // 填充教师列表数据
-            ],
-            studentList: [
-              // 填充学生列表数据
-            ]
-          //}
-          },
+            editStudent: {
+                studentNo: '',
+                studentName: '',
+                classNo: '',
+            },
+            activeTab: 'teacher',
+        },
 
-          created() {
+        created() {
             this.getTeacherList();
-          },
-          methods: {
+        },
+        methods: {
+
+            // 完成
             submitTeacherForm() {
-              // 提交教师信息
-              // 发送 POST 请求保存教师信息到服务器
-              // 成功后清空表单并重新获取教师列表
-              this.$refs.teacherForm.validate(valid => {
-                if (valid) {
-                  axios.post('/teacher', this.teacherForm)
-                    .then(response => {
-                      this.$message.success('教师信息保存成功')
-                      this.getTeacherList()
-                    })
-                    .catch(error => {
-                      this.$message.error('教师信息保存失败')
-                    })
-                }
-              })
+                // 提交教师信息
+                // 发送 POST 请求保存教师信息到服务器
+                // 成功后清空表单并重新获取教师列表
+                this.$refs.teacherForm.validate(valid => {
+                    if (valid) {
+                        axios.post('/teacher', this.teacherForm)
+                            .then(response => {
+                                this.$message.success('教师信息保存成功')
+                                this.getTeacherList()
+                            })
+                            .catch(error => {
+                                this.$message.error('教师信息保存失败')
+                            })
+                    }
+                })
             },
 
             // 完成
             deleteTeacher(row) {
-              // 删除教师信息
-              // 发送 DELETE 请求删除教师信息
-              // 成功后重新获取教师列表
-              this.$confirm("此操作永久删除当前数据，是否继续？","提示",{
-                type:'info'
-              }).then(()=>{
-                axios.delete(`/teacher/` + row.teacherNo)
+                // 删除教师信息
+                // 发送 DELETE 请求删除教师信息
+                // 成功后重新获取教师列表
+                this.$confirm("此操作永久删除当前数据，是否继续？", "提示", {
+                    type: 'info'
+                }).then(() => {
+                    axios.delete(`/teacher/` + row.teacherNo)
                         .then(response => {
-                          this.$message.success('教师信息删除成功')
-                          this.getTeacherList()
+                            this.$message.success('教师信息删除成功')
+                            this.getTeacherList()
                         })
-              }).catch(error => {
+                }).catch(error => {
                     this.$message.error('教师信息删除失败')
-                  })
+                })
             },
 
+            // 完成
             submitStudentForm() {
-              // 提交学生信息
-              // 发送 POST 请求保存学生信息到服务器
-              // 成功后清空表单并重新获取学生列表
-              this.$refs.studentForm.validate(valid => {
-                if (valid) {
-                  axios.post('/student', this.studentForm)
-                    .then(response => {
-                      this.$message.success('学生信息保存成功')
-                      // this.studentForm = {
-                      //   // id: '',
-                      //   // name: '',
-                      //   // email: '',
-                      //   // password: ''
-                      // }
-                      this.getStudentList()
-                    })
-                    .catch(error => {
-                      this.$message.error('学生信息保存失败')
-                    })
-                }
-              })
+                // 提交学生信息
+                // 发送 POST 请求保存学生信息到服务器
+                // 成功后清空表单并重新获取学生列表
+                this.$refs.studentForm.validate(valid => {
+                    if (valid) {
+                        axios.post('/student', this.studentForm)
+                            .then(response => {
+                                this.$message.success('学生信息保存成功')
+                                this.getStudentList()
+                            })
+                            .catch(error => {
+                                this.$message.error('学生信息保存失败')
+                            })
+                    }
+                })
             },
 
+            // 完成
             deleteStudent(row) {
-              // 删除学生信息
-              // 发送 DELETE 请求删除学生信息
-              // 成功后重新获取学生列表
-              this.$confirm("此操作永久删除当前数据，是否继续？","提示",{
-                type:'info'
-              }).then(()=>{
-                axios.delete(`/student/` + row.studentNo)
+                // 删除学生信息
+                // 发送 DELETE 请求删除学生信息
+                // 成功后重新获取学生列表
+                this.$confirm("此操作永久删除当前数据，是否继续？", "提示", {
+                    type: 'info'
+                }).then(() => {
+                    axios.delete(`/student/` + row.studentNo)
                         .then(response => {
-                          this.$message.success('学生信息信息删除成功')
-                          this.getStudentList()
+                            this.$message.success('学生信息信息删除成功')
+                            this.getStudentList()
                         })
-              }).catch(error => {
-                this.$message.error('学生信息删除失败')
-              })
+                }).catch(error => {
+                    this.$message.error('学生信息删除失败')
+                })
             },
 
             // 完成
             getTeacherList() {
-              // 获取教师列表
-              // 发送 GET 请求获取教师列表数据，并更新到 teacherList 变量中
-              axios.get('/teacher')
-                .then(response => {
-                  this.teacherList = response.data
-                })
-                .catch(error => {
-                  console.log(error)
-                })
+                // 获取教师列表
+                // 发送 GET 请求获取教师列表数据，并更新到 teacherList 变量中
+                axios.get('/teacher')
+                    .then(response => {
+                        this.teacherList = response.data
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
             },
 
             // 完成
             getStudentList() {
-              // 获取学生列表
-              // 发送 GET 请求获取学生列表数据，并更新到 studentList 变量中
-              axios.get('/student')
-                .then(response => {
-                  this.studentList = response.data
-                })
-                .catch(error => {
-                  console.log(error)
-                })
-            }
-          },
-          mounted() {
+                // 获取学生列表
+                // 发送 GET 请求获取学生列表数据，并更新到 studentList 变量中
+                axios.get('/student')
+                    .then(response => {
+                        this.studentList = response.data
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            },
+
+            //完成
+            searchTeacher() {
+                // 构造查询参数对象
+                // const params = {
+                //     teacherNo: this.teacherNo,
+                // };
+                // const teacherNo = params.teacherNo.toString();
+                // 使用 axios 库发送 HTTP GET 请求，并指定查询参数
+                axios.get('/teacher/' + this.teacherNo).then(response => {
+                    // 更新 searchedTeacherInfo 对象
+                    // this.searchedTeacherInfo = response.data;
+                    // // 打开对话框，显示搜索结果
+                    // this.showTeacherInfoForm = true;
+                    // 更新 teacherList 数组
+                    this.teacherList = [response.data];
+                }).catch(error => {
+                    // 处理错误
+                    console.error(error);
+                });
+            },
+
+            //todo
+            searchStudent() {
+                axios.get('/student/' + this.studentNo)
+                    .then(response => {
+                        // this.studentInfo = response.data;
+                        // this.dialogVisible = true;
+                        this.studentList = [response.data];
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            },
+
+            editTeacherRow(row) {
+                // 将选中的行数据赋值给 editTeacher 对象
+                this.editTeacher = Object.assign({}, row);
+                // 显示编辑对话框
+                this.editTeacherVisible = true;
+            },
+            editStudentRow(row) {
+                // 将选中的行数据赋值给 editStudent 对象
+                this.editStudent = Object.assign({}, row);
+                // 显示编辑对话框
+                this.editStudentVisible = true;
+            },
+
+            saveTeacher() {
+                // 发送 PUT 请求来更新教师信息
+                axios.put('/teacher/' , this.editTeacher).then(response => {
+                    // 关闭编辑对话框
+                    this.editTeacherVisible = false;
+                    // 刷新表格数据
+                    this.getTeacherList();
+                    this.$message.success('教师信息更改成功')
+                }).catch(error => {
+                    // 处理错误
+                    console.error(error);
+                });
+            },
+
+            saveStudent() {
+                // 发送 PUT 请求来更新学生信息
+                axios.put('/student/', this.editStudent).then(response => {
+                    // 关闭编辑对话框
+                    this.editStudentVisible = false;
+                    // 刷新表格数据
+                    this.getStudentList();
+                    this.$message.success('学生信息更改成功')
+                }).catch(error => {
+                    // 处理错误
+                    console.error(error);
+                });
+            },
+            //取消
+            cancel(){
+                this.editStudentVisible = false;
+                this.editTeacherVisible = false;
+                this.getTeacherList();
+                this.getStudentList();
+                this.$message.info("当前操作取消");
+            },
+
+        },
+
+        mounted() {
             // 组件挂载时获取教师列表和学生列表数据
             this.getTeacherList()
             this.getStudentList()
-          }
-      });
-    </script>
-  </body>
+        }
+    });
+</script>
+</body>
 </html>

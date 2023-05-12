@@ -1,104 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Document</title>
-  </head>
-  <style scoped>
+</head>
+<style scoped>
     .login-form-container {
-      display: flex;
-      justify-content: center;
+        display: flex;
+        justify-content: center;
     }
 
     .login-form {
-      width: 400px;
-      margin-top: 50px;
+        width: 400px;
+        margin-top: 50px;
     }
-  </style>
-  <meta
-    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
-    name="viewport"
-  />
+</style>
+<meta
+        content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+        name="viewport"
+/>
 
-  <!-- 引入样式 -->
-  <link rel="stylesheet" href="../plugins/elementui/index.css" />
-  <link
-    rel="stylesheet"
-    href="../plugins/font-awesome/css/font-awesome.min.css"
-  />
-  <link rel="stylesheet" href="../css/style.css" />
+<!-- 引入样式 -->
+<link rel="stylesheet" href="../plugins/elementui/index.css"/>
+<link
+        rel="stylesheet"
+        href="../plugins/font-awesome/css/font-awesome.min.css"
+/>
+<link rel="stylesheet" href="../css/style.css"/>
 
-  <body>
-    <div id="app">
-      <!-- 登录表单组件 -->
-      <template>
+<body>
+<div id="app">
+    <!-- 登录表单组件 -->
+    <template>
         <div class="login-form-container">
-          <el-form ref="loginForm" :model="loginForm" label-width="80px" class="login-form">
-            <el-form-item label="用户账号:" prop="userNo">
-              <el-input v-model="loginForm.userNo" placeholder="请输入用户账号"></el-input>
-            </el-form-item>
-            <el-form-item label="密码:" prop="password">
-              <el-input type="password" v-model="loginForm.password" placeholder="请输入密码"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="login">登录</el-button>
-            </el-form-item>
-          </el-form>
+            <el-form ref="loginForm" :model="loginForm" label-width="80px" class="login-form">
+                <el-form-item label="用户账号:" prop="userNo">
+                    <el-input v-model="loginForm.userNo" placeholder="请输入用户账号"></el-input>
+                </el-form-item>
+                <el-form-item label="密码:" prop="password">
+                    <el-input type="password" v-model="loginForm.password" placeholder="请输入密码"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="login">登录</el-button>
+                </el-form-item>
+            </el-form>
         </div>
-      </template>
+    </template>
 
-    </div>
+</div>
 
-    <!-- 引入组件库 -->
-    <script src="../js/vue.js"></script>
-    <script src="../plugins/elementui/index.js"></script>
-    <script type="text/javascript" src="../js/jquery.min.js"></script>
-    <script src="../js/axios-0.18.0.js"></script>
-    <script>
-      new Vue({
+<!-- 引入组件库 -->
+<script src="../js/vue.js"></script>
+<script src="../plugins/elementui/index.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script>
+    new Vue({
         el: "#app",
         name: 'LoginForm',
         data() {
-          return {
-            loginForm: {
-              userNo: '',
-              password: '',
-            },
-          };
+            return {
+                loginForm: {
+                    userNo: '',
+                    password: '',
+                },
+            };
         },
         methods: {
-          login() {
-            this.$refs.loginForm.validate((valid) => {
-              if (valid) {
-                axios.post('/user/login', this.loginForm)
-                        .then((response) => {
-                          const data = response.data;
-                          if (data.code === 1) {
-                            this.$message.success('登录成功');
-                            // 将用户信息保存在本地存储或会话存储中
-                            // 重定向到首页
-                            if (data.data === 'manager') {
-                              window.location.href = '/pages/manager.html';
-                            } else if (data.data=== 'teacher') {
-                              window.location.href = '/pages/teacher.html';
-                            } else if (data.data === 'student') {
-                              window.location.href = '/pages/student.html';
-                            }
-                          } else {
-                            this.$message.error(data.message);
-                          }
-                        })
-                        .catch((error) => {
-                          console.log(error);
-                          this.$message.error('登录失败');
-                        });
-              }
-            });
-          },
+            login() {
+                this.$refs.loginForm.validate((valid) => {
+                    if (valid) {
+                        axios.post('/user/login', this.loginForm)
+                            .then((response) => {
+                                const data = response.data;
+                                if (data.code === 1) {
+                                    this.$message.success('登录成功');
+                                    // 将用户信息保存在本地存储或会话存储中
+                                    // 重定向到首页
+                                    if (data.data === 'manager') {
+                                        window.location.href = '/pages/manager.html';
+                                    } else if (data.data === 'teacher') {
+                                        window.location.href = '/pages/teacher.html';
+                                    } else if (data.data === 'student') {
+                                        window.location.href = '/pages/student.html';
+                                    }
+                                } else {
+                                    this.$message.error(data.message);
+                                }
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                                this.$message.error('登录失败');
+                            });
+                    }
+                });
+            },
         },
-      });
-    </script>
-  </body>
+    });
+</script>
+</body>
 </html>

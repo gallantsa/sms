@@ -1,6 +1,9 @@
 package com.sms.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
@@ -8,9 +11,10 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
+@TableName("selecttitle")
 public class SelectTitle {
 
-    @TableField("titleNo")
+    @TableId(value = "titleNo", type = IdType.ASSIGN_ID)
     private String titleNo;
     @TableField("studentNo")
     private String studentNo;

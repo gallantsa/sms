@@ -12,5 +12,5 @@ public class PublishTitleDTO {
     private String titleName;//选题名称
     private String titleType;//选题类型
     private String description;
-    private int maxSelectCount;// 选题最大学生数
+
 }

@@ -55,7 +55,7 @@ public class TeacherController {
      */
     @PutMapping
     public boolean updateTeacher(@RequestBody Teacher teacher) {
-        return teacherService.saveOrUpdate(teacher);
+        return teacherService.updateById(teacher);
     }
 
     /**
@@ -82,4 +82,6 @@ public class TeacherController {
     public List<Teacher> listAllTeachers() {
         return teacherService.list();
     }
+
+
 }

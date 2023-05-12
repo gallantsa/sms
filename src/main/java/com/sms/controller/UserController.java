@@ -44,6 +44,7 @@ public class UserController {
         if(us == null){
             return Result.error("登录失败");
         }
+
         if(!us.getPassword().equals(password)){
             return Result.error("登录失败");
         }

@@ -14,4 +14,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class TeacherServiceImpl extends ServiceImpl<TeacherDao, Teacher> implements TeacherService {
 
+    @Autowired
+    private TeacherDao teacherDao;
+
+    public String getTeacherNo(String userNo){
+        return teacherDao.getTeacherNo(userNo);
+    }
 }

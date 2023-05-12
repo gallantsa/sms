@@ -11,9 +11,13 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
-public class Title {
+@TableName("publishtitle")
+public class PublishTitle {
+
     @TableId(value = "titleNo", type = IdType.ASSIGN_ID)
     private String titleNo;
-    @TableField("titleName")
-    private String titleName;
+    @TableField("teacherNo")
+    private String teacherNo;
+    @TableField("status")
+    private String status; // 是否被选
 }
